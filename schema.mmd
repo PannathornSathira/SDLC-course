@@ -1,0 +1,82 @@
+erDiagram
+    categories ||--o{ products : "categorizes"
+    products ||--o{ reviews : "receives"
+    deal_campaigns ||--o{ deal_items : "contains"
+    products ||--o{ deal_items : "featured_as"
+
+    categories {
+        TEXT id PK "Unique category slug identifier"
+        TEXT name "Category title display name"
+        INTEGER sort_order "Display sequence order"
+    }
+
+    products {
+        TEXT id PK "Unique product identifier"
+        TEXT name "Product display name"
+        TEXT brand "Brand name string"
+        TEXT category_id FK "FK references categories id"
+        REAL price "Current selling price"
+        REAL original_price "Standard list price"
+        INTEGER discount_percent "Percentage discount"
+        REAL rating "Average customer rating"
+        INTEGER review_count "Total customer reviews"
+        TEXT unit "Product unit packaging"
+        TEXT sku UK "Unique stock keeping unit"
+        INTEGER stock_count "Available in-stock quantity"
+        INTEGER sold_count "Total units sold"
+        INTEGER total_stock "Total initial inventory"
+        INTEGER is_best_seller "Best seller flag (0 or 1)"
+        INTEGER is_top_saver "Top saver flag (0 or 1)"
+        INTEGER is_organic "Organic product flag (0 or 1)"
+        TEXT description "Detailed product description"
+        TEXT features_json "JSON array of features"
+        TEXT nutrition_json "JSON object of nutrition facts"
+        TEXT storage_instructions "Storage guidance"
+        TEXT origin "Country or source origin"
+        TEXT shelf_life "Shelf life duration"
+    }
+
+    reviews {
+        TEXT id PK "Review identifier"
+        TEXT product_id FK "FK references products id ON DELETE CASCADE"
+        TEXT author "Review author name"
+        INTEGER rating "Rating score 1 to 5"
+        TEXT date "ISO formatted review date"
+        TEXT title "Review heading"
+        TEXT comment "Full review content text"
+        INTEGER verified "Verified purchase flag (0 or 1)"
+    }
+
+    deal_campaigns {
+        TEXT id PK "Campaign identifier"
+        TEXT title "Promotional campaign title"
+        TEXT ends_at "Campaign expiration timestamp"
+        INTEGER cycle_seconds "Countdown reset duration"
+    }
+
+    deal_items {
+        TEXT campaign_id PK, FK "FK references deal_campaigns id ON DELETE CASCADE"
+        TEXT product_id PK, FK "FK references products id ON DELETE CASCADE"
+        INTEGER sort_order "Display sort ordering"
+        INTEGER is_featured "Featured spotlight deal flag (0 or 1)"
+    }
+
+    brands {
+        TEXT id PK "Brand slug identifier"
+        TEXT name "Brand display name"
+        TEXT headline "Marketing headline text"
+        TEXT background "Banner background hex color"
+        INTEGER is_featured "Featured brand flag (0 or 1)"
+        INTEGER sort_order "Display sequence order"
+    }
+
+    banners {
+        TEXT id PK "Banner identifier"
+        TEXT placement "Slot placement e.g. hero-main"
+        TEXT title "Banner primary headline"
+        TEXT subtitle "Banner secondary text"
+        TEXT cta_label "Call to action label text"
+        TEXT href "Destination target link URL"
+        INTEGER is_active "Active banner flag (0 or 1)"
+        INTEGER sort_order "Display sequence order"
+    }

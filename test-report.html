@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farmart Backend - Automated Test Report</title>
+  <meta name="description" content="Unit test and integration test execution report for Farmart backend with SQLite" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-subtle: #1a2234;
+      --border-color: #243048;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --danger: #f43f5e;
+      --danger-bg: rgba(244, 63, 94, 0.12);
+      --blue: #38bdf8;
+      --purple: #a855f7;
+      --amber: #f59e0b;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 24px;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+
+    .title-group h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge-pass {
+      background: var(--success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .title-group p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    main {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Dashboard metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-color, var(--success));
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--icon-bg, rgba(16, 185, 129, 0.12));
+      color: var(--accent-color, var(--success));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .metric-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .metric-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Filter & Controls */
+    .filter-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+
+    .search-input {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      width: 260px;
+      font-family: inherit;
+    }
+
+    .search-input:focus {
+      border-color: #3b82f6;
+    }
+
+    /* Suites Accordion */
+    .suites-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .suite-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .suite-header {
+      background: var(--bg-card-subtle);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.15s ease;
+    }
+
+    .suite-header:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .suite-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chevron {
+      font-size: 11px;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .chevron.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .suite-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .badge-unit {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .badge-integration {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+    }
+
+    .suite-file {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .suite-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+
+    .stat-pill.success {
+      background: var(--success-bg);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .stat-pill.danger {
+      background: var(--danger-bg);
+      color: #f87171;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .stat-time {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .suite-body {
+      display: block;
+    }
+
+    .suite-body.hidden {
+      display: none;
+    }
+
+    /* Test table */
+    .test-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .test-table th {
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 18px;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .test-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    .test-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-tag {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .tag-passed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .tag-failed {
+      background: rgba(244, 63, 94, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .test-title-cell strong {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .ancestor-cell {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .duration-cell {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .error-box {
+      margin-top: 8px;
+      background: #1e1014;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 20px 24px;
+      background: var(--bg-card);
+      margin-top: 40px;
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: #fff; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="logo-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          TEST REPORT
+        </div>
+        <div class="title-group">
+          <h1>
+            Farmart Backend Test Suite
+            <span class="status-badge-pass"><span class="status-dot"></span> 100% Passed (56/56)</span>
+          </h1>
+          <p>Generated: 10/20/2026, 4:32:55 PM &bull; Vitest v4.1.12 &bull; Node.js v22.23.1 &bull; SQLite WAL</p>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="/" class="nav-btn">Storefront</a>
+        <a href="/docs" class="nav-btn">API Docs</a>
+        <a href="/mermaid.html" class="nav-btn">ER Diagram</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Key Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card" style="--accent-color: #10b981; --icon-bg: rgba(16, 185, 129, 0.12);">
+        <div class="metric-icon">✓</div>
+        <div>
+          <div class="metric-val">56 / 56</div>
+          <div class="metric-lbl">Total Tests Passed (100%)</div>
+        </div>
+      </div>
+      <div class="metric-card" style="--accent-color: #38bdf8; --icon-bg: rgba(56, 189, 248, 0.12);">
+        <div class="metric-icon">⚙️</div>
+        <div>
+          <div class="metric-val">37</div>
+          <div class="metric-lbl">Unit Tests (Pure Service Logic)</div>
+        </div>
+      </div>
+      <div class="metric-card" style="--accent-color: #a855f7; --icon-bg: rgba(168, 85, 247, 0.12);">
+        <div class="metric-icon">🔗</div>
+        <div>
+          <div class="metric-val">19</div>
+          <div class="metric-lbl">Integration Tests (Routes & SQLite)</div>
+        </div>
+      </div>
+      <div class="metric-card" style="--accent-color: #f59e0b; --icon-bg: rgba(245, 158, 11, 0.12);">
+        <div class="metric-icon">⚡</div>
+        <div>
+          <div class="metric-val">0.02s</div>
+          <div class="metric-lbl">Total Test Execution Time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="filter-bar">
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="filterSuites('all')">All Tests (56)</button>
+        <button class="tab-btn" onclick="filterSuites('unit')">Unit Tests (37)</button>
+        <button class="tab-btn" onclick="filterSuites('integration')">Integration Tests (19)</button>
+      </div>
+
+      <input 
+        type="text" 
+        class="search-input" 
+        id="test-search" 
+        placeholder="Filter test cases..." 
+        oninput="searchTests(this.value)"
+      />
+    </div>
+
+    <!-- Suites Accordion -->
+    <div class="suites-container" id="suites-container">
+      
+    <div class="suite-card" data-suite-type="unit" data-suite-name="tests/unit/business-logic.test.ts">
+      <div class="suite-header" onclick="toggleSuite(0)">
+        <div class="suite-title-group">
+          <span class="chevron" id="chevron-0">▼</span>
+          <span class="suite-badge badge-unit">UNIT</span>
+          <span class="suite-file">tests/unit/business-logic.test.ts</span>
+        </div>
+        <div class="suite-stats">
+          <span class="stat-pill success">20/20 passed</span>
+          
+          <span class="stat-time">4.1 ms</span>
+        </div>
+      </div>
+      <div class="suite-body" id="suite-body-0">
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Status</th>
+              <th>Test Case</th>
+              <th style="width: 250px;">Category / Ancestor</th>
+              <th style="width: 100px; text-align: right;">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="calculates correct percentage discount rounded to whole number">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>calculates correct percentage discount rounded to whole number</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Pricing &amp; Discount Logic</td>
+                <td class="duration-cell">0.77 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 0 discount when price equals or exceeds original price">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 0 discount when price equals or exceeds original price</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Pricing &amp; Discount Logic</td>
+                <td class="duration-cell">0.09 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="safely handles 0, negative, or invalid prices without throwing or nan">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>safely handles 0, negative, or invalid prices without throwing or NaN</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Pricing &amp; Discount Logic</td>
+                <td class="duration-cell">0.11 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="identifies out of stock items when stock &lt;= 0">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>identifies out of stock items when stock &lt;= 0</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Inventory &amp; Stock Level Logic</td>
+                <td class="duration-cell">0.17 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="flags low stock warning when stock is between 1 and 5">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>flags low stock warning when stock is between 1 and 5</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Inventory &amp; Stock Level Logic</td>
+                <td class="duration-cell">0.06 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="flags standard in-stock status when stock &gt; 5">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>flags standard in-stock status when stock &gt; 5</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Inventory &amp; Stock Level Logic</td>
+                <td class="duration-cell">0.05 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="calculates promotional sales progress percentage clamped to 0-100">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>calculates promotional sales progress percentage clamped to 0-100</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Inventory &amp; Stock Level Logic</td>
+                <td class="duration-cell">0.12 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="trims search keyword and normalizes empty strings to undefined">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>trims search keyword and normalizes empty strings to undefined</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Query Parameter Normalization &amp; Sanitization</td>
+                <td class="duration-cell">0.12 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="ignores &#039;all categories&#039; selector case-insensitively">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>ignores &#039;ALL CATEGORIES&#039; selector case-insensitively</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Query Parameter Normalization &amp; Sanitization</td>
+                <td class="duration-cell">0.27 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="parses boolean string flags correctly">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>parses boolean string flags correctly</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Query Parameter Normalization &amp; Sanitization</td>
+                <td class="duration-cell">0.09 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="validates sort options and falls back to &#039;relevance&#039; for invalid values">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>validates sort options and falls back to &#039;relevance&#039; for invalid values</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Query Parameter Normalization &amp; Sanitization</td>
+                <td class="duration-cell">0.13 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="clamps page &gt;= 1 and limits between 1 and 100">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>clamps page &gt;= 1 and limits between 1 and 100</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Query Parameter Normalization &amp; Sanitization</td>
+                <td class="duration-cell">0.06 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="parses valid json features array">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>parses valid JSON features array</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › JSON Attribute Parsing &amp; Fault Tolerance</td>
+                <td class="duration-cell">0.28 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="safely falls back to empty array on malformed or empty features json">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>safely falls back to empty array on malformed or empty features JSON</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › JSON Attribute Parsing &amp; Fault Tolerance</td>
+                <td class="duration-cell">0.09 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="parses valid nutrition facts object">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>parses valid nutrition facts object</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › JSON Attribute Parsing &amp; Fault Tolerance</td>
+                <td class="duration-cell">0.12 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="safely falls back to empty object on malformed nutrition facts json">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>safely falls back to empty object on malformed nutrition facts JSON</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › JSON Attribute Parsing &amp; Fault Tolerance</td>
+                <td class="duration-cell">0.08 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="validates author, rating range, and comment presence">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>validates author, rating range, and comment presence</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Review Validation &amp; Rating Computations</td>
+                <td class="duration-cell">0.09 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="computes accurate average ratings rounded to 1 decimal place">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>computes accurate average ratings rounded to 1 decimal place</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Review Validation &amp; Rating Computations</td>
+                <td class="duration-cell">0.49 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="formats countdown accurately for future dates">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>formats countdown accurately for future dates</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Deal Countdown Logic</td>
+                <td class="duration-cell">0.80 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="marks deal as expired when time has elapsed">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>marks deal as expired when time has elapsed</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Unit Tests: Business Logic Service › Deal Countdown Logic</td>
+                <td class="duration-cell">0.07 ms</td>
+              </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <div class="suite-card" data-suite-type="unit" data-suite-name="tests/unit/pre-tool-use-hook.test.ts">
+      <div class="suite-header" onclick="toggleSuite(1)">
+        <div class="suite-title-group">
+          <span class="chevron" id="chevron-1">▼</span>
+          <span class="suite-badge badge-unit">UNIT</span>
+          <span class="suite-file">tests/unit/pre-tool-use-hook.test.ts</span>
+        </div>
+        <div class="suite-stats">
+          <span class="stat-pill success">17/17 passed</span>
+          
+          <span class="stat-time">2.7 ms</span>
+        </div>
+      </div>
+      <div class="suite-body" id="suite-body-1">
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Status</th>
+              <th>Test Case</th>
+              <th style="width: 250px;">Category / Ancestor</th>
+              <th style="width: 100px; text-align: right;">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks standard rm -rf">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks standard rm -rf</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">1.07 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks inverted flags rm -fr">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks inverted flags rm -fr</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.07 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks separate flags rm -r -f and rm -f -r">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks separate flags rm -r -f and rm -f -r</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.13 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks uppercase flag rm -rf / rm -rf / rm -rf">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks uppercase flag rm -Rf / rm -rF / rm -RF</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.12 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks long flags rm --recursive --force">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks long flags rm --recursive --force</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.07 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks wrapped commands (sudo, env, bash -c)">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks wrapped commands (sudo, env, bash -c)</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.17 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks chained commands containing rm -rf">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks chained commands containing rm -rf</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.16 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="allows safe rm commands without recursive + force combo">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>allows safe rm commands without recursive + force combo</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;rm -rf&#039; commands</td>
+                <td class="duration-cell">0.10 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks git push --force">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks git push --force</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.28 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks git push -f">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks git push -f</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.11 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks git push --force-with-lease and --force-if-includes">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks git push --force-with-lease and --force-if-includes</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.15 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks git push with force refspec (+branch)">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks git push with force refspec (+branch)</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.05 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="blocks nested in subshell (bash -c)">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>blocks nested in subshell (bash -c)</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.04 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="allows standard git push without force">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>allows standard git push without force</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Blocking &#039;git push force&#039; commands</td>
+                <td class="duration-cell">0.05 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="does not block git commit messages mentioning rm -rf or -f">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>does not block git commit messages mentioning rm -rf or -f</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Edge cases &amp; False Positives prevention</td>
+                <td class="duration-cell">0.04 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="does not block echo or grep referencing blocked strings">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>does not block echo or grep referencing blocked strings</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Edge cases &amp; False Positives prevention</td>
+                <td class="duration-cell">0.04 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="handles null or non-string inputs safely">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>handles null or non-string inputs safely</strong>
+                  
+                </td>
+                <td class="ancestor-cell">PreToolUse Safety Hook: Dangerous Command Blocker › Edge cases &amp; False Positives prevention</td>
+                <td class="duration-cell">0.03 ms</td>
+              </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <div class="suite-card" data-suite-type="integration" data-suite-name="tests/integration/db-integrity.test.ts">
+      <div class="suite-header" onclick="toggleSuite(2)">
+        <div class="suite-title-group">
+          <span class="chevron" id="chevron-2">▼</span>
+          <span class="suite-badge badge-integration">INTEGRATION</span>
+          <span class="suite-file">tests/integration/db-integrity.test.ts</span>
+        </div>
+        <div class="suite-stats">
+          <span class="stat-pill success">4/4 passed</span>
+          
+          <span class="stat-time">1.6 ms</span>
+        </div>
+      </div>
+      <div class="suite-body" id="suite-body-2">
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Status</th>
+              <th>Test Case</th>
+              <th style="width: 250px;">Category / Ancestor</th>
+              <th style="width: 100px; text-align: right;">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="enforces foreign key constraints: fails to insert product with invalid category_id">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>enforces foreign key constraints: fails to insert product with invalid category_id</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: Database Integrity &amp; Relational Constraints</td>
+                <td class="duration-cell">0.90 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="enforces unique constraint: fails to insert duplicate sku">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>enforces unique constraint: fails to insert duplicate SKU</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: Database Integrity &amp; Relational Constraints</td>
+                <td class="duration-cell">0.20 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="enforces review rating check constraint (between 1 and 5)">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>enforces review rating check constraint (BETWEEN 1 AND 5)</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: Database Integrity &amp; Relational Constraints</td>
+                <td class="duration-cell">0.11 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="cascades deletion: deleting a product cascades to delete associated reviews and deal items">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>cascades deletion: deleting a product cascades to delete associated reviews and deal items</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: Database Integrity &amp; Relational Constraints</td>
+                <td class="duration-cell">0.42 ms</td>
+              </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <div class="suite-card" data-suite-type="integration" data-suite-name="tests/integration/routes.test.ts">
+      <div class="suite-header" onclick="toggleSuite(3)">
+        <div class="suite-title-group">
+          <span class="chevron" id="chevron-3">▼</span>
+          <span class="suite-badge badge-integration">INTEGRATION</span>
+          <span class="suite-file">tests/integration/routes.test.ts</span>
+        </div>
+        <div class="suite-stats">
+          <span class="stat-pill success">15/15 passed</span>
+          
+          <span class="stat-time">15.4 ms</span>
+        </div>
+      </div>
+      <div class="suite-body" id="suite-body-3">
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Status</th>
+              <th>Test Case</th>
+              <th style="width: 250px;">Category / Ancestor</th>
+              <th style="width: 100px; text-align: right;">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with hello world message">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with Hello World message</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/hello</td>
+                <td class="duration-cell">9.74 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with all 8 seed categories and accurate product counts">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with all 8 seed categories and accurate product counts</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/categories</td>
+                <td class="duration-cell">0.65 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with paginated product catalog">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with paginated product catalog</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.89 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="filters products by text query ?q=">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>filters products by text query ?q=</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.32 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="filters products by category slug ?category=">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>filters products by category slug ?category=</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.28 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="sorts products by price ascending ?sort=price_asc">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>sorts products by price ascending ?sort=price_asc</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.35 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="sorts products by price descending ?sort=price_desc">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>sorts products by price descending ?sort=price_desc</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.58 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="sorts products by rating ?sort=rating">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>sorts products by rating ?sort=rating</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.38 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="supports pagination with ?page= &amp;limit=">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>supports pagination with ?page= &amp;limit=</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.80 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="filters boolean flags ?organic=true &amp; ?bestseller=true">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>filters boolean flags ?organic=true &amp; ?bestSeller=true</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products (Catalog Search &amp; Filtering)</td>
+                <td class="duration-cell">0.23 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with full product details and reviews for existing id">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with full product details and reviews for existing ID</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products/[id]</td>
+                <td class="duration-cell">0.45 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 404 with structured error message when product is not found">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 404 with structured error message when product is not found</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/products/[id]</td>
+                <td class="duration-cell">0.13 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with promotional campaign, countdown, and featured product">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with promotional campaign, countdown, and featured product</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/deals</td>
+                <td class="duration-cell">0.20 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with active featured brands">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with active featured brands</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/brands/featured</td>
+                <td class="duration-cell">0.28 ms</td>
+              </tr>
+            
+              <tr class="test-row" data-test-status="passed" data-test-title="returns 200 with active hero promotional banners">
+                <td>
+                  <span class="status-tag tag-passed">
+                    ✓ PASS
+                  </span>
+                </td>
+                <td class="test-title-cell">
+                  <strong>returns 200 with active hero promotional banners</strong>
+                  
+                </td>
+                <td class="ancestor-cell">Integration Tests: API Routes with SQLite Backend › GET /api/promotions/banners</td>
+                <td class="duration-cell">0.16 ms</td>
+              </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    </div>
+  </main>
+
+  <footer>
+    <div>
+      Farmart Grocery E-Commerce &bull; Quality Assurance &amp; Test Execution Report
+    </div>
+    <div>
+      Engine: Vitest 4 &bull; SQLite Sync 3.45 &bull; Next.js 16 App Router
+    </div>
+  </footer>
+
+  <script>
+    function toggleSuite(index) {
+      const body = document.getElementById('suite-body-' + index);
+      const chevron = document.getElementById('chevron-' + index);
+      if (body) {
+        body.classList.toggle('hidden');
+        if (chevron) chevron.classList.toggle('collapsed');
+      }
+    }
+
+    function filterSuites(type) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.suite-card').forEach(card => {
+        if (type === 'all' || card.getAttribute('data-suite-type') === type) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function searchTests(query) {
+      const q = query.toLowerCase().trim();
+      document.querySelectorAll('.test-row').forEach(row => {
+        const title = row.getAttribute('data-test-title') || '';
+        if (!q || title.includes(q)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

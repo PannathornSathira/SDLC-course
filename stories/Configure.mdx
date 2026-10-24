@@ -1,0 +1,281 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import Image from "next/image";
+
+import Github from "./assets/github.svg";
+import Discord from "./assets/discord.svg";
+import Youtube from "./assets/youtube.svg";
+import Tutorials from "./assets/tutorials.svg";
+import Styling from "./assets/styling.png";
+import Context from "./assets/context.png";
+import Assets from "./assets/assets.png";
+import Docs from "./assets/docs.png";
+import Share from "./assets/share.png";
+import FigmaPlugin from "./assets/figma-plugin.png";
+import Testing from "./assets/testing.png";
+import Accessibility from "./assets/accessibility.png";
+import Theming from "./assets/theming.png";
+import AddonLibrary from "./assets/addon-library.png";
+
+export const RightArrow = () => <svg 
+    viewBox="0 0 14 14" 
+    width="8px" 
+    height="14px" 
+    className="ml-1 inline-block align-middle fill-current [shape-rendering:inherit]"
+>
+  <path d="m11.1 7.35-5.5 5.5a.5.5 0 0 1-.7-.7L10.04 7 4.9 1.85a.5.5 0 1 1 .7-.7l5.5 5.5c.2.2.2.5 0 .7Z" />
+</svg>
+
+<Meta title="Configure your project" />
+
+<div className="mb-12">
+  <div className="mb-8">
+    # Configure your project
+
+    Because Storybook works separately from your app, you'll need to configure it for your specific stack and setup. Below, explore guides for configuring Storybook with popular frameworks and tools. If you get stuck, learn how you can ask for help from our community.
+  </div>
+  <div className="w-full flex flex-row gap-5 max-[600px]:flex-col [&_a]:text-sm">
+    <div className="flex flex-1 flex-col">
+      <Image
+        src={Styling}
+        alt="A wall of logos representing different styling technologies"
+        width={0}
+        height={0}
+        className="w-full h-auto object-cover"
+      />
+      <h4 className="pt-5! pb-[5px]! m-0!">Add styling and CSS</h4>
+      <p className="m-0 pb-2.5">Like with web applications, there are many ways to include CSS within Storybook. Learn more about setting up styling within Storybook.</p>
+      <a
+        href="https://storybook.js.org/docs/configure/styling-and-css/?renderer=react&ref=configure"
+        target="_blank"
+      >Learn more<RightArrow /></a>
+    </div>
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={0}
+        height={0}
+        className="w-full h-auto object-cover"
+        src={Context}
+        alt="An abstraction representing the composition of data for a component"
+      />
+      <h4 className="pt-5! pb-[5px]! m-0!">Provide context and mocking</h4>
+      <p className="m-0 pb-2.5">Often when a story doesn't render, it's because your component is expecting a specific environment or context (like a theme provider) to be available.</p>
+      <a
+        href="https://storybook.js.org/docs/writing-stories/decorators/?renderer=react&ref=configure#context-for-mocking"
+        target="_blank"
+      >Learn more<RightArrow /></a>
+    </div>
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={0}
+        height={0}
+        className="w-full h-auto object-cover" 
+        src={Assets} 
+        alt="A representation of typography and image assets" 
+      />
+      <div>
+        <h4 className="pt-5! pb-[5px]! m-0!">Load assets and resources</h4>
+        <p className="m-0 pb-2.5">To link static files (like fonts) to your projects and stories, use the
+        `staticDirs` configuration option to specify folders to load when
+        starting Storybook.</p>
+        <a
+          href="https://storybook.js.org/docs/configure/images-and-assets/?renderer=react&ref=configure"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div className="mb-12">
+  <div className="mb-8">
+    # Do more with Storybook
+
+    Now that you know the basics, let's explore other parts of Storybook that will improve your experience. This list is just to get you started. You can customise Storybook in many ways to fit your needs.
+  </div>
+
+  <div className="w-full flex flex-row gap-5 max-[600px]:flex-col [&_a]:text-sm">
+    <div className="grid grid-cols-2 gap-x-5 gap-y-8 max-[600px]:grid-cols-1">
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={Docs} 
+          alt="A screenshot showing the autodocs tag being set, pointing a docs page being generated" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Autodocs</h4>
+        <p className="m-0 pb-2.5">Auto-generate living,
+          interactive reference documentation from your components and stories.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-docs/autodocs/?renderer=react&ref=configure"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={Share} 
+          alt="A browser window showing a Storybook being published to a chromatic.com URL" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Publish to Chromatic</h4>
+        <p className="m-0 pb-2.5">Publish your Storybook to review and collaborate with your entire team.</p>
+        <a
+          href="https://storybook.js.org/docs/sharing/publish-storybook/?renderer=react&ref=configure#publish-storybook-with-chromatic"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={FigmaPlugin} 
+          alt="Windows showing the Storybook plugin in Figma" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Figma Plugin</h4>
+        <p className="m-0 pb-2.5">Embed your stories into Figma to cross-reference the design and live
+          implementation in one place.</p>
+        <a
+          href="https://storybook.js.org/docs/sharing/design-integrations/?renderer=react&ref=configure#embed-storybook-in-figma-with-the-plugin"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={Testing} 
+          alt="Screenshot of tests passing and failing" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Testing</h4>
+        <p className="m-0 pb-2.5">Use stories to test a component in all its variations, no matter how
+          complex.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-tests/?renderer=react&ref=configure"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={Accessibility} 
+          alt="Screenshot of accessibility tests passing and failing" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Accessibility</h4>
+        <p className="m-0 pb-2.5">Automatically test your components for a11y issues as you develop.</p>
+        <a
+          href="https://storybook.js.org/docs/writing-tests/accessibility-testing/?renderer=react&ref=configure"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+      <div className="flex flex-1 flex-col">
+        <Image 
+          width={0}
+          height={0}
+          className="w-full h-auto object-cover" 
+          src={Theming} 
+          alt="Screenshot of Storybook in light and dark mode" 
+        />
+        <h4 className="pt-5! pb-[5px]! m-0!">Theming</h4>
+        <p className="m-0 pb-2.5">Theme Storybook's UI to personalize it to your project.</p>
+        <a
+          href="https://storybook.js.org/docs/configure/theming/?renderer=react&ref=configure"
+          target="_blank"
+        >Learn more<RightArrow /></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div className="relative mb-12 flex h-[180px] w-full items-center overflow-hidden rounded-[5px] border border-black/5 bg-[#eef3f8] max-[600px]:h-[280px] max-[600px]:items-start max-[600px]:pt-8">
+  <div className="max-w-60 pl-12 max-[600px]:pl-6 [&_h4]:pt-0">
+    <h4>Addons</h4>
+    <p className="m-0 pb-2.5">Integrate your tools with Storybook to connect workflows.</p>
+    <a
+        href="https://storybook.js.org/addons/?ref=configure"
+        target="_blank"
+      >Discover all addons<RightArrow /></a>
+  </div>
+  <div className="absolute left-[345px] top-0 h-full w-[200%] overflow-hidden max-[800px]:left-[300px] max-[600px]:left-0 max-[600px]:right-0 max-[600px]:top-[130px] max-[600px]:bottom-0 max-[600px]:h-auto max-[600px]:w-[124%] [&_img]:w-[650px] [&_img]:max-w-none [&_img]:-rotate-15 [&_img]:ml-10 [&_img]:-mt-[72px] [&_img]:object-cover [&_img]:backface-hidden [&_img]:shadow-[0_0_1px_rgb(255_255_255/0)] max-[600px]:[&_img]:w-[1200px] max-[600px]:[&_img]:-rotate-12 max-[600px]:[&_img]:-ml-6 max-[600px]:[&_img]:mt-12 max-[600px]:[&_img]:-mb-10">
+    <Image 
+      width={650}
+      height={347}
+      src={AddonLibrary} 
+      alt="Integrate your tools with Storybook to connect workflows." 
+    />
+  </div>
+</div>
+
+<div className="w-full grid grid-cols-4 gap-5 max-[600px]:grid-cols-2 [&_a]:text-sm [&_p]:mb-2.5">
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={32}
+        height={32}
+        layout="fixed"
+        src={Github} 
+        alt="Github logo" 
+        className="max-h-8 self-start object-cover"
+      />
+      Join our contributors building the future of UI development.
+
+      <a
+        href="https://github.com/storybookjs/storybook"
+        target="_blank"
+      >Star on GitHub<RightArrow /></a>
+    </div>
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={33}
+        height={32}
+        layout="fixed"
+        src={Discord} 
+        alt="Discord logo" 
+        className="max-h-8 self-start object-cover"
+      />
+      <div>
+        Get support and chat with frontend developers.
+
+        <a
+          href="https://discord.gg/storybook"
+          target="_blank"
+        >Join Discord server<RightArrow /></a>
+      </div>
+    </div>
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={32}
+        height={32}
+        layout="fixed"
+        src={Youtube} 
+        alt="Youtube logo" 
+        className="max-h-8 self-start object-cover"
+      />
+      <div>
+        Watch tutorials, feature previews and interviews.
+
+        <a
+          href="https://www.youtube.com/@chromaticui"
+          target="_blank"
+        >Watch on YouTube<RightArrow /></a>
+      </div>
+    </div>
+    <div className="flex flex-1 flex-col">
+      <Image 
+        width={33}
+        height={32}
+        layout="fixed"
+        src={Tutorials} 
+        alt="A book" 
+        className="max-h-8 self-start object-cover"
+      />
+      <p>Follow guided walkthroughs on for key workflows.</p>
+
+      <a
+          href="https://storybook.js.org/tutorials/?ref=configure"
+          target="_blank"
+        >Discover tutorials<RightArrow /></a>
+    </div>
+</div>
