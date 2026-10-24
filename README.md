@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Farmart Next.js & Storybook (Lab 3 & 4)
 
-## Getting Started
+Modern e-commerce grocery store and design system built with Next.js 16, React 19, Tailwind CSS v4, SQLite, and Storybook 10.
 
-First, run the development server:
+---
 
+## 🚀 Quick Start
+
+### 1. Install Dependencies & Setup Database
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run db:reset    # Clean and recreate SQLite schema
+npm run db:seed     # Populate seed data (categories, products, reviews, deals)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Development Server (Next.js)
+```bash
+npm run dev
+```
+- **Storefront Home**: [http://localhost:3000](http://localhost:3000)
+- **Interactive Overview & Flow**: [http://localhost:3000/overview](http://localhost:3000/overview)
+- **Design System Showcase**: [http://localhost:3000/design](http://localhost:3000/design)
+- **API Documentation & Explorer**: [http://localhost:3000/docs](http://localhost:3000/docs)
+- **Interactive Database ER Diagram**: [http://localhost:3000/mermaid.html](http://localhost:3000/mermaid.html)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Storybook UI Explorer
+```bash
+npm run storybook
+```
+- **Storybook Dashboard**: [http://localhost:6006](http://localhost:6006)
+- **Build Static Storybook**:
+```bash
+npm run build-storybook
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🎨 Design System
 
-To learn more about Next.js, take a look at the following resources:
+The visual language follows the specification defined in [`DESIGN.md`](./DESIGN.md) (compliant with [getdesign.md](https://getdesign.md/what-is-design-md)):
+- **Primary Brand Color**: `#FAB528` (Warm golden-amber)
+- **Atmosphere**: Bright white grocery canvas (`#FFFFFF`) with pastel category surfaces
+- **Typography Scale**: High-legibility modern sans-serif
+- **Core Components**:
+  - `Dialog` (`app/components/Dialog.tsx`)
+  - `Hero Banners` (Summer Juice Milk & 20% Sale Off)
+  - `Category Cards` (8 merchandise strips)
+  - `Top Saver Today` (Countdown deals with live dynamic pricing)
+  - `Quantity Stepper` (`app/components/QuantityStepper.tsx`)
+  - `Stock Status Badge` & `Rating Breakdown`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Available Scripts
 
-## Deploy on Vercel
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start Next.js development server on `http://localhost:3000` |
+| `npm run build` | Build optimized production bundle |
+| `npm run start` | Serve production build |
+| `npm run lint` | Run ESLint (Next.js, TypeScript, and Storybook rules) |
+| `npm test` | Run backend unit and integration tests via Vitest |
+| `npm run test:unit` | Run business logic unit tests |
+| `npm run test:integration` | Run API route & SQLite cascade tests |
+| `npm run test:report` | Run test suites and regenerate HTML report (`public/test-report.html`) |
+| `npm run db:seed` | Seed catalog into SQLite database (`data/farmart.db`) |
+| `npm run db:reset` | Reset and re-apply database schema from scratch |
+| `npm run storybook` | Launch Storybook on port 6006 |
+| `npm run build-storybook`| Generate static Storybook site |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🏗 Architecture & Modules
+
+- **`app/`**: Next.js App Router (Storefront `/`, Product `/product/[id]`, Design System `/design`, Architecture Overview `/overview`, OpenAPI Docs `/docs`).
+- **`app/api/`**: RESTful API endpoints (`/api/products`, `/api/categories`, `/api/deals`, `/api/brands/featured`, `/api/promotions/banners`).
+- **`lib/db/`**: SQLite persistence with Node.js native `DatabaseSync` (`node:sqlite`), foreign keys, and cascading deletes.
+- **`lib/services/`**: Pure business logic decoupled from I/O for deterministic testing.
+- **`stories/`**: Storybook stories and component interaction tests.
+- **`.agents/`**: AI Agent Customizations:
+  - `skills/farmart-onboarding/`: Onboarding and database seeding runbook.
+  - `hooks.json` & `scripts/`: PreToolUse safety hooks blocking `rm -rf` and `git push --force`.
+- **`schema.mmd`**: Mermaid Entity-Relationship diagram.
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all unit & integration tests
+npm test
+
+# Generate and view interactive visual test report
+npm run test:report
+```
+Test report is exported to `public/test-report.html` and viewable at [http://localhost:3000/test-report.html](http://localhost:3000/test-report.html).
+# SDLC-course
